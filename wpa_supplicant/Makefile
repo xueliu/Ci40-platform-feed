@@ -30,7 +30,7 @@ define Package/wpa_supplicant
 	SECTION:=utils
 	CATEGORY:=Utilities
 	DEFAULT:=n
-	TITLE:=CGILua library
+	TITLE:=WPA Supplicant
 	DEPENDS:=libnl
 	URL:=http://hostap.epitest.fi/releases
 endef

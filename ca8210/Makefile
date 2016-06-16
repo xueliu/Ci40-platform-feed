@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_NAME:=cascoda
+PKG_NAME:=ca8210
 PKG_RELEASE:=0.1
 PKG_VERSION:=master
 
@@ -15,9 +15,9 @@ PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 
-define KernelPackage/cascoda
+define KernelPackage/ca8210
   SUBMENU:=WPAN 802.15.4 Support
-  TITLE:=CASCODA CA821x Driver
+  TITLE:=CASCODA CA8210 Driver
   DEPENDS:=@TARGET_pistachio_marduk +kmod-mac802154 +kmod-ieee802154_6lowpan \
            +kmod-nhc_udp +kmod-nhc_fragment +kmod-nhc_dest +kmod-nhc_hop \
            +kmod-nhc_mobility +kmod-nhc_routing +kmod-nhc_ipv6
@@ -26,8 +26,8 @@ define KernelPackage/cascoda
   KCONFIG:=
 endef
 
-define KernelPackage/cascoda/description
- Cascoda ca8210 Driver
+define KernelPackage/ca8210/description
+  Cascoda ca8210 Driver
 endef
 
 
@@ -48,5 +48,5 @@ define Build/Compile
 endef
 
 
-$(eval $(call KernelPackage,cascoda))
+$(eval $(call KernelPackage,ca8210))
 

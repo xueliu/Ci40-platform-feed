@@ -15,7 +15,6 @@ cgilua            | This package has been added to use webscripts using lua page
 click-apps        | This package contains click applications.
 fping             | This program is used to send ICMP echo probes to network hosts, similar to ping.
 u-boot            | This package is used for u-boot bootloader for pistachio marduk platform.
-webscripts        | Webscripts for onboard and provisioning of Ci40.
 
 Command                                         | Description
 :---------------------------------------------- | :---------------------------------------

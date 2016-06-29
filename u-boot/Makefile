@@ -7,8 +7,8 @@ PKG_VERSION=2015.04
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/FlowM2M/u-boot.git -b dev
-PKG_SOURCE_VERSION:=HEAD
+PKG_SOURCE_URL:=https://github.com/CreatorDev/u-boot.git
+PKG_SOURCE_VERSION:=0.1.0
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -23,7 +23,7 @@ endef
 
 define uboot/pistachio_marduk
   TITLE:=U-Boot for Pistachio Marduk
-  SOC:=danube
+  SOC:=Pistachio
   DEPS:=@TARGET_pistachio
 endef
 
@@ -69,7 +69,7 @@ endef
 define Package/uboot/install/default
 	$(CP) \
 		$(PKG_BUILD_DIR)/u-boot-pistachio-nor.img \
-		$(BIN_DIR)/openwrt-$(BOARD)-$(1)-u-boot.img
+		$(BIN_DIR)/openwrt-$(BOARD)-$(1)-u-boot-$(PKG_SOURCE_VERSION).img
 endef
 
 define Package/uboot/install/template

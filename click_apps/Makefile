@@ -6,7 +6,7 @@ PKG_VERSION:=0.1.0
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/IMGCreator/click-apps-for-openwrt.git
+PKG_SOURCE_URL:=https://github.com/CreatorDev/click-apps-for-openwrt.git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_VERSION:=$(PKG_VERSION)
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)

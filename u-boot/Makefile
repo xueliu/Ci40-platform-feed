@@ -7,7 +7,7 @@ PKG_VERSION=2015.04
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_URL:=https://github.com/FlowM2M/u-boot.git -b dev
+PKG_SOURCE_URL:=https://github.com/CreatorDev/u-boot.git -b master-pistachio
 PKG_SOURCE_VERSION:=HEAD
 
 include $(INCLUDE_DIR)/package.mk
@@ -23,7 +23,7 @@ endef
 
 define uboot/pistachio_marduk
   TITLE:=U-Boot for Pistachio Marduk
-  SOC:=danube
+  SOC:=Pistachio
   DEPS:=@TARGET_pistachio
 endef
 

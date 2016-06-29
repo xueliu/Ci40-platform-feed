@@ -2,7 +2,7 @@
 
 ## Description
 
-  This is the collection of specific packages required by [IMGCreator/openwrt](https://github.com/IMGCreator/openwrt) for Creator Ci40(Marduk) platform
+  This is the collection of specific packages required by [CreatorDev/openwrt](https://github.com/CreatorDev/openwrt) for Creator Ci40(Marduk) platform
   based upon Imagination's Pistachio SoC.
 
 ## Collection of packages for OpenWrt

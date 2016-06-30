@@ -20,7 +20,7 @@ define Package/board-test
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=board-test
-  DEPENDS:= +e2fsprogs
+  DEPENDS:= +e2fsprogs +alsa-utils-tests
 endef
 
 define Package/board-test/install

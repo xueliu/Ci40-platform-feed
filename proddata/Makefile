@@ -20,7 +20,9 @@ define Package/proddata
  SECTION:=utils
  CATEGORY:=Utilities
  TITLE:=proddata
+ DEPENDS:= +glog
 endef
+
 define Package/proddata/description
       Proddata tool.
 endef
@@ -29,6 +31,8 @@ CMAKE_OPTIONS += -DBUILD_TESTS=OFF -DSTAGING_DIR=$(STAGING_DIR)
 
 define Package/proddata/install
 	$(INSTALL_DIR) $(1)/usr/bin/
-	# rules to install binaries in rootfs
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/lib/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/* $(1)/usr/lib
 endef
 $(eval $(call BuildPackage,$(PKG_NAME)))

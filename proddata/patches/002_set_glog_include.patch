@@ -1,0 +1,10 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 753d8bd..9721802 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -27,4 +27,4 @@ INSTALL(PROGRAMS wifi_cal.sh DESTINATION bin)
+ ######################
+ FILE(GLOB CPPLINT_CHECK *.cc *.h)
+ LIST(REMOVE_ITEM CPPLINT_CHECK ${CMAKE_CURRENT_SOURCE_DIR}/lib_crc.h)
+-CPPLINT_ADD(src ${CPPLINT_CHECK})
++#CPPLINT_ADD(src ${CPPLINT_CHECK})

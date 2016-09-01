@@ -12,19 +12,8 @@ PKG_SOURCE_VERSION:=0.1.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define uboot/Default
-  TITLE:=
-  SOC:=
-  DDR_SETTINGS:=
-  IMAGE:=
-  DEPS:=
-endef
-
-
 define uboot/pistachio_marduk
   TITLE:=U-Boot for Pistachio Marduk
-  SOC:=Pistachio
-  DEPS:=@TARGET_pistachio
 endef
 
 UBOOTS:= \
@@ -34,8 +23,9 @@ define Package/uboot/template
 define Package/uboot-pistachio-$(1)
   SECTION:=boot
   CATEGORY:=Boot Loaders
-  DEPENDS:=$(3)
   TITLE:=$(2)
+  DEPENDS:=@TARGET_pistachio
+  DEFAULT:=y if (TARGET_pistachio)
   VARIANT:=$(1)
 endef
 endef
@@ -47,15 +37,9 @@ endef
 endef
 
 define BuildUBootPackage
-	$(eval $(uboot/Default))
 	$(eval $(uboot/$(1)))
-	DEPS:=$(uboot/$(1)/DEPS)
-	$(call Package/uboot/template,$(1),$(TITLE),$(DEPS))
+	$(call Package/uboot/template,$(1),$(TITLE))
 	$(call Package/uboot/config/template,$(1))
-endef
-
-define Build/Prepare
-	$(call Build/Prepare/Default)
 endef
 
 define Build/Configure
@@ -66,7 +50,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) CROSS_COMPILE=$(TARGET_CROSS)
 endef
 
-define Package/uboot/install/default
+define Package/uboot/install/Default
 	$(CP) \
 		$(PKG_BUILD_DIR)/u-boot-pistachio-nor.img \
 		$(BIN_DIR)/openwrt-$(BOARD)-$(1)-u-boot-$(PKG_SOURCE_VERSION).img
@@ -74,7 +58,7 @@ endef
 
 define Package/uboot/install/template
 define Package/uboot-pistachio-$(1)/install
-	$(call Package/uboot/install/default,$(1),$(if $(IMAGE),$(IMAGE),u-boot.bin))
+	$(call Package/uboot/install/Default,$(1))
 	$(if $(CONFIG_PACKAGE_UBOOT_SPL), \
 		$(CP) $(PKG_BUILD_DIR)/$(call qstrip,$(CONFIG_PACKAGE_UBOOT_SPL_NAME)) $(BIN_DIR)/)
 	$(if $(CONFIG_PACKAGE_UBOOT_ENVIMAGE), \

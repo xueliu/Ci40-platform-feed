@@ -53,7 +53,7 @@ endef
 define Package/uboot/install/Default
 	$(CP) \
 		$(PKG_BUILD_DIR)/u-boot-pistachio-nor.img \
-		$(BIN_DIR)/openwrt-$(BOARD)-$(1)-u-boot-$(PKG_SOURCE_VERSION).img
+		$(BIN_DIR)/uboot-$(BOARD)-$(1)-$(PKG_SOURCE_VERSION).img
 endef
 
 define Package/uboot/install/template

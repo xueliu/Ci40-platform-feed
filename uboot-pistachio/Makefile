@@ -31,7 +31,7 @@ UBOOTS:= \
 	pistachio_marduk
 
 define Package/uboot/template
-define Package/uboot-$(1)
+define Package/uboot-pistachio-$(1)
   SECTION:=boot
   CATEGORY:=Boot Loaders
   DEPENDS:=$(3)
@@ -41,8 +41,8 @@ endef
 endef
 
 define Package/uboot/config/template
-define Package/uboot-$(1)/config
-	source "$(CURDIR)/Config-$(1).in"
+define Package/uboot-pistachio-$(1)/config
+	source "$(CURDIR)/Config.in"
 endef
 endef
 
@@ -73,7 +73,7 @@ define Package/uboot/install/default
 endef
 
 define Package/uboot/install/template
-define Package/uboot-$(1)/install
+define Package/uboot-pistachio-$(1)/install
 	$(call Package/uboot/install/default,$(1),$(if $(IMAGE),$(IMAGE),u-boot.bin))
 	$(if $(CONFIG_PACKAGE_UBOOT_SPL), \
 		$(CP) $(PKG_BUILD_DIR)/$(call qstrip,$(CONFIG_PACKAGE_UBOOT_SPL_NAME)) $(BIN_DIR)/)
@@ -88,6 +88,6 @@ endef
 $(foreach u,$(UBOOTS), \
 	$(eval $(call BuildUBootPackage,$(u))) \
 	$(eval $(call Package/uboot/install/template,$(u))) \
-	$(eval $(call BuildPackage,uboot-$(u))) \
+	$(eval $(call BuildPackage,uboot-pistachio-$(u))) \
 )
 

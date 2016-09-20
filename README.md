@@ -1,4 +1,4 @@
-# openwrt-feeds
+# Ci40-platform-feed
 
 ## Description
 

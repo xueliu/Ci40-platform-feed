@@ -1,5 +1,4 @@
-if PACKAGE_uboot-pistachio_marduk
-
+if PACKAGE_uboot-pistachio-pistachio_marduk
 	config PACKAGE_UBOOT_SPL
 		bool "Install U-Boot SPL binary image"
 		depends on !PACKAGE_XLOADER

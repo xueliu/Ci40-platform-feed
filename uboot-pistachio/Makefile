@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=u-boot
 PKG_RELEASE:=1
-PKG_VERSION=2015.10
+PKG_VERSION=2015.10-pistachio
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2

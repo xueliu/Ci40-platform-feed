@@ -2,13 +2,13 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=u-boot
 PKG_RELEASE:=1
-PKG_VERSION=2015.10-pistachio
+PKG_SOURCE_VERSION:=1.0.0
+PKG_VERSION=2015.10-pistachio-$(PKG_SOURCE_VERSION)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE_URL:=https://github.com/CreatorDev/u-boot.git
-PKG_SOURCE_VERSION:=0.2.0
 
 include $(INCLUDE_DIR)/package.mk
 

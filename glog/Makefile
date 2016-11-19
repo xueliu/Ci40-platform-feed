@@ -1,8 +1,7 @@
 include $(TOPDIR)/rules.mk
 PKG_NAME:=glog
 PKG_VERSION:=v0.3.4
-#PKG_VERSION:=master
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 PKG_SOURCE_PROTO:=git
@@ -19,7 +18,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/glog
  SECTION:=utils
  CATEGORY:=Utilities
- DEPENDS:=+libstdcpp
+ DEPENDS:=+libstdcpp +libunwind
  TITLE:=glog
 endef
 define Package/glog/description

@@ -29,7 +29,7 @@ include $(INCLUDE_DIR)/package.mk
 define KernelPackage/uccp420wlan
   SUBMENU:=Wireless Drivers
   TITLE:=Imagination wireless driver
-  DEPENDS:=@TARGET_pistachio +proddata +kmod-cfg80211 +kmod-mac80211 +@DRIVER_11N_SUPPORT
+  DEPENDS:=@TARGET_pistachio +kmod-cfg80211 +kmod-mac80211 +@DRIVER_11N_SUPPORT
   FILES:=$(PKG_BUILD_DIR)/uccp420wlan.$(LINUX_KMOD_SUFFIX)
 endef
 

@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=u-boot
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 PKG_SOURCE_VERSION:=1.0.3
 PKG_VERSION=2015.10-pistachio-$(PKG_SOURCE_VERSION)
 
@@ -25,7 +25,6 @@ define Package/uboot-pistachio-$(1)
   CATEGORY:=Boot Loaders
   TITLE:=$(2)
   DEPENDS:=@TARGET_pistachio
-  DEFAULT:=y if (TARGET_pistachio)
   VARIANT:=$(1)
 endef
 endef

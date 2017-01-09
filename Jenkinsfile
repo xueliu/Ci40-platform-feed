@@ -9,5 +9,5 @@ properties([
 
 stage('Trigger openwrt build') {
     build job: "../openwrt/${params.OPENWRT_BRANCH}",
-        parameters: [string(name: 'OVERRIDE_CI40-PLATFORM-FEED', value: "${BRANCH_NAME}")]
+        parameters: [string(name: 'OVERRIDE_CI40', value: "${BRANCH_NAME}")]
 }

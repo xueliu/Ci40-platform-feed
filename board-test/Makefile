@@ -2,7 +2,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=board-test
 PKG_VERSION:=0.1.1
-PKG_RELEASE:=2
+PKG_RELEASE:=3
 PKG_LICENSE:=BSD-3-Clause
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
@@ -21,6 +21,12 @@ define Package/board-test
   CATEGORY:=Utilities
   TITLE:=board-test
   DEPENDS:= +e2fsprogs +alsa-utils-tests
+endef
+
+define Package/board-test/config
+    select BUSYBOX_CUSTOM
+    select BUSYBOX_CONFIG_USLEEP
+    select BUSYBOX_CONFIG_GETOPT
 endef
 
 define Package/board-test/install

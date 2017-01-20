@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ "$ACTION" = ifup ] && [ echo "$DEVICE" | grep -qE 'wlan[0-9]+' ] {
+    echo e > /sys/class/net/$DEVICE/queues/rx-0/rps_cpus
+}

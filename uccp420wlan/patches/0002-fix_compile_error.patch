@@ -1,0 +1,262 @@
+Index: uccp420wlan-6.9.1/src/80211_if.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/80211_if.c
++++ uccp420wlan-6.9.1/src/80211_if.c
+@@ -85,14 +85,14 @@ unsigned char img_suspend_status;
+ #endif
+ 
+ #define CHAN2G(_freq, _idx)  {		\
+-	.band = IEEE80211_BAND_2GHZ,	\
++	.band = NL80211_BAND_2GHZ,	\
+ 	.center_freq = (_freq),		\
+ 	.hw_value = (_idx),		\
+ 	.max_power = 20,		\
+ }
+ 
+ #define CHAN5G(_freq, _idx, _flags) {	\
+-	.band = IEEE80211_BAND_5GHZ,	\
++	.band = NL80211_BAND_5GHZ,	\
+ 	.center_freq = (_freq),		\
+ 	.hw_value = (_idx),		\
+ 	.max_power = 20,		\
+@@ -185,7 +185,7 @@ static struct ieee80211_rate ofdm_rates[
+ static struct ieee80211_supported_band band_2ghz = {
+ 	.channels = dsss_chantable,
+ 	.n_channels = ARRAY_SIZE(dsss_chantable),
+-	.band = IEEE80211_BAND_2GHZ,
++	.band = NL80211_BAND_2GHZ,
+ 	.bitrates = dsss_rates,
+ 	.n_bitrates = ARRAY_SIZE(dsss_rates),
+ };
+@@ -193,7 +193,7 @@ static struct ieee80211_supported_band b
+ static struct ieee80211_supported_band band_5ghz = {
+ 	.channels = ofdm_chantable,
+ 	.n_channels = ARRAY_SIZE(ofdm_chantable),
+-	.band = IEEE80211_BAND_5GHZ,
++	.band = NL80211_BAND_5GHZ,
+ 	.bitrates = ofdm_rates,
+ 	.n_bitrates = ARRAY_SIZE(ofdm_rates),
+ };
+@@ -1419,15 +1419,15 @@ static void init_hw(struct ieee80211_hw
+ #endif
+ 
+ 	if (wifi->params.dot11g_support) {
+-		hw->wiphy->bands[IEEE80211_BAND_2GHZ] = &band_2ghz;
+-		setup_ht_cap(&hw->wiphy->bands[IEEE80211_BAND_2GHZ]->ht_cap);
++		hw->wiphy->bands[NL80211_BAND_2GHZ] = &band_2ghz;
++		setup_ht_cap(&hw->wiphy->bands[NL80211_BAND_2GHZ]->ht_cap);
+ 	}
+ 
+ 	if (wifi->params.dot11a_support) {
+ 		if (vht_support)
+ 			setup_vht_cap(&band_5ghz.vht_cap);
+-		hw->wiphy->bands[IEEE80211_BAND_5GHZ] = &band_5ghz;
+-		setup_ht_cap(&hw->wiphy->bands[IEEE80211_BAND_5GHZ]->ht_cap);
++		hw->wiphy->bands[NL80211_BAND_5GHZ] = &band_5ghz;
++		setup_ht_cap(&hw->wiphy->bands[NL80211_BAND_5GHZ]->ht_cap);
+ 	}
+ 
+ 	memset(hw->wiphy->addr_mask, 0, sizeof(hw->wiphy->addr_mask));
+@@ -1465,9 +1465,7 @@ static void init_hw(struct ieee80211_hw
+ 
+ static int ampdu_action(struct ieee80211_hw *hw,
+ 				struct ieee80211_vif *vif,
+-				enum ieee80211_ampdu_mlme_action action,
+-				struct ieee80211_sta *sta,
+-				u16 tid, u16 *ssn, u8 buf_size, bool amsdu)
++				struct ieee80211_ampdu_params *params)
+ {
+ 	int ret = 0;
+ 	unsigned int val = 0;
+@@ -1476,14 +1474,14 @@ static int ampdu_action(struct ieee80211
+ 	UCCP_DEBUG_80211IF("%s-80211IF: ampdu action started\n",
+ 			((struct mac80211_dev *)(hw->priv))->name);
+ 		/* TODO */
+-	switch (action) {
++	switch (params->action) {
+ 	case IEEE80211_AMPDU_RX_START:
+ 		{
+-		val = tid | TID_INITIATOR_AP;
++		val = params->tid | TID_INITIATOR_AP;
+ 		dev->tid_info[val].tid_state = TID_STATE_AGGR_START;
+-		dev->tid_info[val].ssn = *ssn;
++		dev->tid_info[val].ssn = params->ssn;
+ 		uccp420wlan_prog_ba_session_data(1,
+-						 tid,
++						 params->tid,
+ 						 &dev->tid_info[val].ssn,
+ 						 1,
+ 						 vif->addr,
+@@ -1492,10 +1490,10 @@ static int ampdu_action(struct ieee80211
+ 		break;
+ 	case IEEE80211_AMPDU_RX_STOP:
+ 		{
+-		val = tid | TID_INITIATOR_AP;
++		val = params->tid | TID_INITIATOR_AP;
+ 		dev->tid_info[val].tid_state = TID_STATE_AGGR_STOP;
+ 		uccp420wlan_prog_ba_session_data(0,
+-						 tid,
++						 params->tid,
+ 						 &dev->tid_info[val].ssn,
+ 						 1,
+ 						 vif->addr,
+@@ -1504,24 +1502,24 @@ static int ampdu_action(struct ieee80211
+ 		break;
+ 	case IEEE80211_AMPDU_TX_START:
+ 		{
+-		val = tid | TID_INITIATOR_STA;
+-		ieee80211_start_tx_ba_cb_irqsafe(vif, sta->addr, tid);
++		val = params->tid | TID_INITIATOR_STA;
++		ieee80211_start_tx_ba_cb_irqsafe(vif, params->sta->addr, params->tid);
+ 		dev->tid_info[val].tid_state = TID_STATE_AGGR_START;
+-		dev->tid_info[val].ssn = *ssn;
++		dev->tid_info[val].ssn = params->ssn;
+ 		}
+ 		break;
+ 	case IEEE80211_AMPDU_TX_STOP_FLUSH:
+ 	case IEEE80211_AMPDU_TX_STOP_FLUSH_CONT:
+ 	case IEEE80211_AMPDU_TX_STOP_CONT:
+ 		{
+-		val = tid | TID_INITIATOR_STA;
++		val = params->tid | TID_INITIATOR_STA;
+ 		dev->tid_info[val].tid_state = TID_STATE_AGGR_STOP;
+-		ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
++		ieee80211_stop_tx_ba_cb_irqsafe(vif, params->sta->addr, params->tid);
+ 		}
+ 		break;
+ 	case IEEE80211_AMPDU_TX_OPERATIONAL:
+ 		{
+-		val = tid | TID_INITIATOR_STA;
++		val = params->tid | TID_INITIATOR_STA;
+ 		dev->tid_info[val].tid_state = TID_STATE_AGGR_OPERATIONAL;
+ 		}
+ 		break;
+@@ -1937,6 +1935,10 @@ int scan(struct ieee80211_hw *hw,
+ 
+ 	struct cfg80211_scan_request *req;
+ 
++	struct cfg80211_scan_info info = {
++		.aborted = true,
++	};
++
+ 	req = &ireq->req;
+ 
+ 	scan_req.n_ssids = req->n_ssids;
+@@ -1954,7 +1956,7 @@ int scan(struct ieee80211_hw *hw,
+ 		 * and some data traffic
+ 		 */
+ 		if (wifi->params.hw_scan_status != HW_SCAN_STATUS_NONE) {
+-			ieee80211_scan_completed(uvif->dev->hw, false);
++			ieee80211_scan_completed(uvif->dev->hw, &info);
+ 			wifi->params.hw_scan_status = HW_SCAN_STATUS_NONE;
+ 		}
+ 
+@@ -1997,6 +1999,10 @@ void uccp420wlan_scan_complete(void *con
+ {
+ 	struct mac80211_dev *dev = (struct mac80211_dev *)context;
+ 
++	struct cfg80211_scan_info info = {
++		.aborted = true,
++	};
++
+ 	/* DO NOT update the scan results through cfg80211 API's we just pass
+ 	 * the beacons and probe responses up and mac80211 will inform cfg80211
+ 	 */
+@@ -2012,7 +2018,7 @@ void uccp420wlan_scan_complete(void *con
+ 		 */
+ 		if (wifi->params.hw_scan_status != HW_SCAN_STATUS_NONE) {
+ 			dev->stats->umac_scan_complete++;
+-			ieee80211_scan_completed(dev->hw, false);
++			ieee80211_scan_completed(dev->hw, &info);
+ 
+ 			/* Keep track of HW Scan requests and compeltes */
+ 			wifi->params.hw_scan_status = HW_SCAN_STATUS_NONE;
+@@ -2031,8 +2037,12 @@ void cancel_hw_scan(struct ieee80211_hw
+ 	struct umac_vif *uvif = (struct umac_vif *)vif->drv_priv;
+ 	struct mac80211_dev *dev = NULL;
+ 
+-	dev = (struct mac80211_dev *)hw->priv;
+ 
++	struct cfg80211_scan_info info = {
++		.aborted = true,
++	};
++
++	dev = (struct mac80211_dev *)hw->priv;
+ 	if (wifi->params.hw_scan_status == HW_SCAN_STATUS_PROGRESS) {
+ 		pr_info("Aborting pending scan request...\n");
+ 
+@@ -2042,7 +2052,7 @@ void cancel_hw_scan(struct ieee80211_hw
+ 			return;
+ 
+ 		if (!wait_for_scan_abort(dev)) {
+-			ieee80211_scan_completed(hw, true);
++			ieee80211_scan_completed(hw, &info);
+ 			wifi->params.hw_scan_status = HW_SCAN_STATUS_NONE;
+ 			dev->stats->umac_scan_complete++;
+ 			return;
+@@ -2930,10 +2940,10 @@ static int uccp420wlan_init(void)
+ 	 * creation in all channels
+ 	 */
+ 	if (wifi->params.production_test && !error) {
+-		enum ieee80211_band band;
++		enum nl80211_band band;
+ 		struct ieee80211_supported_band *sband;
+ 
+-		for (band = 0; band < IEEE80211_NUM_BANDS; band++) {
++		for (band = 0; band < NUM_NL80211_BANDS; band++) {
+ 			sband = hw->wiphy->bands[band];
+ 			if (sband)
+ 				for (i = 0; i < sband->n_channels; i++)
+@@ -4346,7 +4356,7 @@ static ssize_t proc_write_config(struct
+ 			pr_err("Invalid tx_continuous parameter\n");
+ 	} else if (param_get_val(buf, "start_prod_mode=", &val)) {
+ 		unsigned int pri_chnl_num = 0;
+-		unsigned int freq_band = IEEE80211_BAND_5GHZ;
++		unsigned int freq_band = NL80211_BAND_5GHZ;
+ 		int center_freq = 0;
+ 
+ 		if (wifi->params.production_test != 1) {
+@@ -4364,9 +4374,9 @@ static ssize_t proc_write_config(struct
+ 		tasklet_init(&dev->proc_tx_tasklet, packet_generation,
+ 			     (unsigned long)dev);
+ 		if (pri_chnl_num < 15)
+-			freq_band = IEEE80211_BAND_2GHZ;
++			freq_band = NL80211_BAND_2GHZ;
+ 		else
+-			freq_band = IEEE80211_BAND_5GHZ;
++			freq_band = NL80211_BAND_5GHZ;
+ 
+ 		center_freq =
+ 		ieee80211_channel_to_frequency(pri_chnl_num,
+Index: uccp420wlan-6.9.1/src/core.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/core.c
++++ uccp420wlan-6.9.1/src/core.c
+@@ -1235,9 +1235,9 @@ void uccp420wlan_rx_frame(struct sk_buff
+ 	memset(&rx_status, 0, sizeof(struct ieee80211_rx_status));
+ 
+ 	if (rx->channel < 15)
+-		rx_status.band = IEEE80211_BAND_2GHZ;
++		rx_status.band = NL80211_BAND_2GHZ;
+ 	else
+-		rx_status.band = IEEE80211_BAND_5GHZ;
++		rx_status.band = NL80211_BAND_5GHZ;
+ 
+ 	rx_status.freq = ieee80211_channel_to_frequency(rx->channel,
+ 							rx_status.band);
+Index: uccp420wlan-6.9.1/src/tx.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/tx.c
++++ uccp420wlan-6.9.1/src/tx.c
+@@ -1139,9 +1139,9 @@ int uccp420wlan_tx_free_buff_req(struct
+ 				ts2 = sync->ts2;
+ 				sync->atu = 0;
+ 
+-				if (ets_band == IEEE80211_BAND_2GHZ)
++				if (ets_band == NL80211_BAND_2GHZ)
+ 					ldelta = BTS_AP_24GHZ_ETS;
+-				else if (ets_band == IEEE80211_BAND_5GHZ)
++				else if (ets_band == NL80211_BAND_5GHZ)
+ 					ldelta = BTS_AP_5GHZ_ETS;
+ 
+ 				if (frc_to_atu) {

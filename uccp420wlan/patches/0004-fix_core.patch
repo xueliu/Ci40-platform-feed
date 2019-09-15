@@ -1,0 +1,66 @@
+Index: uccp420wlan-6.9.1/src/core.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/core.c
++++ uccp420wlan-6.9.1/src/core.c
+@@ -1235,9 +1235,9 @@ void uccp420wlan_rx_frame(struct sk_buff
+ 	memset(&rx_status, 0, sizeof(struct ieee80211_rx_status));
+ 
+ 	if (rx->channel < 15)
+-		rx_status.band = IEEE80211_BAND_2GHZ;
++		rx_status.band = NL80211_BAND_2GHZ;
+ 	else
+-		rx_status.band = IEEE80211_BAND_5GHZ;
++		rx_status.band = NL80211_BAND_5GHZ;
+ 
+ 	rx_status.freq = ieee80211_channel_to_frequency(rx->channel,
+ 							rx_status.band);
+@@ -1263,21 +1263,21 @@ void uccp420wlan_rx_frame(struct sk_buff
+ 
+ 		/* NSS */
+ 		if (!rx->nss || rx->nss > 8)
+-			rx_status.vht_nss = 1;
++			rx_status.nss = 1;
+ 		else
+-			 rx_status.vht_nss = rx->nss;
++			 rx_status.nss = rx->nss;
+ 
+ 		/* CBW */
+ 		if (rx->rate_flags & ENABLE_CHNL_WIDTH_80MHZ)
+-			rx_status.flag |= RX_VHT_FLAG_80MHZ;
++			rx_status.bw = RATE_INFO_BW_80;
+ 		else if (rx->rate_flags & ENABLE_CHNL_WIDTH_40MHZ)
+-			rx_status.flag |= RX_FLAG_40MHZ;
++			rx_status.bw = RATE_INFO_BW_40;
+ 
+ 		/* SGI */
+ 		if (rx->rate_flags & ENABLE_SGI)
+-			rx_status.flag |= RX_FLAG_SHORT_GI;
++			rx_status.enc_flags |= RX_ENC_FLAG_SHORT_GI;
+ 
+-		rx_status.flag |= RX_FLAG_VHT;
++		rx_status.encoding = RX_ENC_VHT;
+ 	} else if (rx->rate_flags & ENABLE_11N_FORMAT) {
+ 		/* Rate */
+ 		if ((rx->rate_or_mcs & MARK_RATE_AS_MCS_INDEX) != 0x80) {
+@@ -1289,17 +1289,17 @@ void uccp420wlan_rx_frame(struct sk_buff
+ 
+ 		/* CBW */
+ 		if (rx->rate_flags & ENABLE_CHNL_WIDTH_40MHZ)
+-			rx_status.flag |= RX_FLAG_40MHZ;
++			rx_status.bw = RATE_INFO_BW_40;
+ 
+ 		/* SGI */
+ 		if (rx->rate_flags & ENABLE_SGI)
+-			rx_status.flag |= RX_FLAG_SHORT_GI;
++			rx_status.enc_flags |= RX_ENC_FLAG_SHORT_GI;
+ 
+ 		/* HT Greenfield */
+ 		if (rx->rate_flags & ENABLE_GREEN_FIELD)
+-			rx_status.flag |= RX_FLAG_HT_GF;
++			rx_status.enc_flags |= RX_ENC_FLAG_HT_GF;
+ 
+-		rx_status.flag |= RX_FLAG_HT;
++		rx_status.encoding = RX_ENC_HT;
+ 	} else {
+ 		band = dev->hw->wiphy->bands[rx_status.band];
+ 

@@ -1,0 +1,25 @@
+Index: uccp420wlan-6.9.1/src/80211_if.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/80211_if.c
++++ uccp420wlan-6.9.1/src/80211_if.c
+@@ -2040,7 +2040,10 @@ void cancel_hw_scan(struct ieee80211_hw
+ 			return;
+ 
+ 		if (!wait_for_scan_abort(dev)) {
+-			ieee80211_scan_completed(hw, true);
++			struct cfg80211_scan_info info = {
++				.aborted = true,
++			};
++			ieee80211_scan_completed(hw, &info);
+ 			wifi->params.hw_scan_status = HW_SCAN_STATUS_NONE;
+ 			dev->stats->umac_scan_complete++;
+ 			return;
+@@ -2287,7 +2290,7 @@ static int rpu_testmode_dump(struct ieee
+ 	/*Get Dump only once per command*/
+ 	if (!idx) {
+ 		err = nla_parse(tb, RPU_TM_ATTR_MAX, data,
+-					 len, rpu_testmode_policy);
++					 len, rpu_testmode_policy, NULL);
+ 		if (err)
+ 			goto dump_fail;
+ 		if (!tb[RPU_TM_ATTR_CMD]) {

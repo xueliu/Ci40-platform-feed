@@ -1,0 +1,16 @@
+Index: uccp420wlan-6.9.1/src/tx.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/tx.c
++++ uccp420wlan-6.9.1/src/tx.c
+@@ -1139,9 +1139,9 @@ int uccp420wlan_tx_free_buff_req(struct
+ 				ts2 = sync->ts2;
+ 				sync->atu = 0;
+ 
+-				if (ets_band == IEEE80211_BAND_2GHZ)
++				if (ets_band == NL80211_BAND_2GHZ)
+ 					ldelta = BTS_AP_24GHZ_ETS;
+-				else if (ets_band == IEEE80211_BAND_5GHZ)
++				else if (ets_band == NL80211_BAND_5GHZ)
+ 					ldelta = BTS_AP_5GHZ_ETS;
+ 
+ 				if (frc_to_atu) {

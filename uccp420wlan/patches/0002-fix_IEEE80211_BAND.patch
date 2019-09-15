@@ -1,0 +1,93 @@
+Index: uccp420wlan-6.9.1/src/80211_if.c
+===================================================================
+--- uccp420wlan-6.9.1.orig/src/80211_if.c
++++ uccp420wlan-6.9.1/src/80211_if.c
+@@ -85,14 +85,14 @@ unsigned char img_suspend_status;
+ #endif
+ 
+ #define CHAN2G(_freq, _idx)  {		\
+-	.band = IEEE80211_BAND_2GHZ,	\
++	.band = NL80211_BAND_2GHZ,	\
+ 	.center_freq = (_freq),		\
+ 	.hw_value = (_idx),		\
+ 	.max_power = 20,		\
+ }
+ 
+ #define CHAN5G(_freq, _idx, _flags) {	\
+-	.band = IEEE80211_BAND_5GHZ,	\
++	.band = NL80211_BAND_5GHZ,	\
+ 	.center_freq = (_freq),		\
+ 	.hw_value = (_idx),		\
+ 	.max_power = 20,		\
+@@ -185,7 +185,7 @@ static struct ieee80211_rate ofdm_rates[
+ static struct ieee80211_supported_band band_2ghz = {
+ 	.channels = dsss_chantable,
+ 	.n_channels = ARRAY_SIZE(dsss_chantable),
+-	.band = IEEE80211_BAND_2GHZ,
++	.band = NL80211_BAND_2GHZ,
+ 	.bitrates = dsss_rates,
+ 	.n_bitrates = ARRAY_SIZE(dsss_rates),
+ };
+@@ -193,7 +193,7 @@ static struct ieee80211_supported_band b
+ static struct ieee80211_supported_band band_5ghz = {
+ 	.channels = ofdm_chantable,
+ 	.n_channels = ARRAY_SIZE(ofdm_chantable),
+-	.band = IEEE80211_BAND_5GHZ,
++	.band = NL80211_BAND_5GHZ,
+ 	.bitrates = ofdm_rates,
+ 	.n_bitrates = ARRAY_SIZE(ofdm_rates),
+ };
+@@ -1419,15 +1419,15 @@ static void init_hw(struct ieee80211_hw
+ #endif
+ 
+ 	if (wifi->params.dot11g_support) {
+-		hw->wiphy->bands[IEEE80211_BAND_2GHZ] = &band_2ghz;
+-		setup_ht_cap(&hw->wiphy->bands[IEEE80211_BAND_2GHZ]->ht_cap);
++		hw->wiphy->bands[NL80211_BAND_2GHZ] = &band_2ghz;
++		setup_ht_cap(&hw->wiphy->bands[NL80211_BAND_2GHZ]->ht_cap);
+ 	}
+ 
+ 	if (wifi->params.dot11a_support) {
+ 		if (vht_support)
+ 			setup_vht_cap(&band_5ghz.vht_cap);
+-		hw->wiphy->bands[IEEE80211_BAND_5GHZ] = &band_5ghz;
+-		setup_ht_cap(&hw->wiphy->bands[IEEE80211_BAND_5GHZ]->ht_cap);
++		hw->wiphy->bands[NL80211_BAND_5GHZ] = &band_5ghz;
++		setup_ht_cap(&hw->wiphy->bands[NL80211_BAND_5GHZ]->ht_cap);
+ 	}
+ 
+ 	memset(hw->wiphy->addr_mask, 0, sizeof(hw->wiphy->addr_mask));
+@@ -2928,10 +2928,10 @@ static int uccp420wlan_init(void)
+ 	 * creation in all channels
+ 	 */
+ 	if (wifi->params.production_test && !error) {
+-		enum ieee80211_band band;
++		enum nl80211_band band;
+ 		struct ieee80211_supported_band *sband;
+ 
+-		for (band = 0; band < IEEE80211_NUM_BANDS; band++) {
++		for (band = 0; band < NUM_NL80211_BANDS; band++) {
+ 			sband = hw->wiphy->bands[band];
+ 			if (sband)
+ 				for (i = 0; i < sband->n_channels; i++)
+@@ -4344,7 +4344,7 @@ static ssize_t proc_write_config(struct
+ 			pr_err("Invalid tx_continuous parameter\n");
+ 	} else if (param_get_val(buf, "start_prod_mode=", &val)) {
+ 		unsigned int pri_chnl_num = 0;
+-		unsigned int freq_band = IEEE80211_BAND_5GHZ;
++		unsigned int freq_band = NL80211_BAND_5GHZ;
+ 		int center_freq = 0;
+ 
+ 		if (wifi->params.production_test != 1) {
+@@ -4362,9 +4362,9 @@ static ssize_t proc_write_config(struct
+ 		tasklet_init(&dev->proc_tx_tasklet, packet_generation,
+ 			     (unsigned long)dev);
+ 		if (pri_chnl_num < 15)
+-			freq_band = IEEE80211_BAND_2GHZ;
++			freq_band = NL80211_BAND_2GHZ;
+ 		else
+-			freq_band = IEEE80211_BAND_5GHZ;
++			freq_band = NL80211_BAND_5GHZ;
+ 
+ 		center_freq =
+ 		ieee80211_channel_to_frequency(pri_chnl_num,
